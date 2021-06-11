@@ -13,12 +13,24 @@ function load() {
   const dt = new Date();
   //このdateオブジェクトから必要な情報の取得
   const day = dt.getDate();
-  const month = dt.getMonth(); // 月は配列のindexの値なので０から始まる(+1)
+  const month = dt.getMonth(); // 月は配列格納indexの値なので０から始まる(+1)
   const year = dt.getFullYear();
 
+  //現在の月はじめ
+  const firstDayOfMonth = new Date(year, month, 1);
   //ひと月が何日あるか調べる
-  const daysInmonth = new Date(year, month + 1, 0).getDate(); //month + 1で次の月に移動、3番目の引数0で先月に戻って、getdate()で日付を取得
-  console.log(daysInmonth);
+  const daysInmonth = new Date(year, month + 1, 0).getDate(); //month + 1で次の月に移動、3番目の引数１が月のはじめなので０で先月に戻ってs、getdate()で今月の最終日付を取得
+  //firstDaymonthを使って現在の月はじめの情報を取得
+  const dateString = firstDayOfMonth.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+  /*indexOf関数は文字列の中に指定した文字があるか探して、あればその位置を返sす
+  カレンダーの月の空白の位置を検索weekdaysの配列を使って、０番目から探す
+  */
+  const paddingDays = weekdays.indexOf(dateString.split(", ")[0]);
 }
 
 load();
