@@ -5,7 +5,7 @@ let events = localStorage.getItem("events") ? JSON.parse(localStorage.getItem(ev
 localstrage..ユーザーのデータをwebブラウザ(ローカル環境)に保存する/getItem..データを取得/ JSON.parse..JSONをJavaScriptオブジェクトに変換
 ローカルからデータを取得できればJSON.parseを返し配列の初期化
 */
-const calender = document.querySelector("calender"); //カレンダーを操作
+const calender = document.getElementById("calender"); //カレンダーを操作
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 //カレンダーの空白を計算
 
@@ -31,6 +31,21 @@ function load() {
   カレンダーの月の空白の位置を検索weekdaysの配列を使って、０番目から探す
   */
   const paddingDays = weekdays.indexOf(dateString.split(", ")[0]);
+
+  for (let i = 1; i <= paddingDays + daysInmonth; i++) {
+    const daySquare = document.createElement("div");
+    daySquare.classList.add("day");
+
+    if (i > paddingDays) {
+      daySquare.innerText = i - paddingDays;
+
+      daySquare.addEventListener("click", () => console.log("click"));
+    } else {
+      daySquare.classList.add("padding");
+    }
+
+    calender.appendChild(daySquare);
+  }
 }
 
 load();
