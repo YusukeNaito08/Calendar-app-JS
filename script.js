@@ -5,7 +5,7 @@ let events = localStorage.getItem("events") ? JSON.parse(localStorage.getItem(ev
 localstrage..ユーザーのデータをwebブラウザ(ローカル環境)に保存する/getItem..データを取得/ JSON.parse..JSONをJavaScriptオブジェクトに変換
 ローカルからデータを取得できればJSON.parseを返し配列の初期化
 */
-const calender = document.getElementById("calender"); //カレンダーを操作
+const calendar = document.getElementById("calendar"); //カレンダーを操作
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 //カレンダーの空白を計算
 
@@ -27,25 +27,26 @@ function load() {
     month: "numeric",
     day: "numeric",
   });
-  /*indexOf関数は文字列の中に指定した文字があるか探して、あればその位置を返sす
+  /*indexOf関数は文字列の中に指定した文字があるか探して、あればその位置を返す
   カレンダーの月の空白の位置を検索weekdaysの配列を使って、０番目から探す
   */
-  const paddingDays = weekdays.indexOf(dateString.split(", ")[0]);
-
+  const paddingDays = weekdays.indexOf(dateString.split(",")[0]);
+  /*ループで空白の日にちを引いて表示させる,paddingdays2+daysinmonth30
+  i>2padingsays
+  */
   for (let i = 1; i <= paddingDays + daysInmonth; i++) {
     const daySquare = document.createElement("div");
     daySquare.classList.add("day");
 
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
-
       daySquare.addEventListener("click", () => console.log("click"));
     } else {
       daySquare.classList.add("padding");
     }
-
-    calender.appendChild(daySquare);
+    calendar.appendChild(daySquare);
   }
+  console.log(paddingDays);
 }
 
 load();
