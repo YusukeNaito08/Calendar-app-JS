@@ -11,6 +11,11 @@ const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frida
 
 function load() {
   const dt = new Date();
+  //ボタン、setMonthで現在の月、変数nav=0 次の月++ 前の月--
+  if (nav != 0) {
+    dt.setMonth(new Date().getMonth() + nav);
+  }
+
   //このdateオブジェクトから必要な情報の取得
   const day = dt.getDate();
   const month = dt.getMonth(); // 月は配列格納indexの値なので０から始まる(+1)
@@ -31,22 +36,38 @@ function load() {
   カレンダーの月の空白の位置を検索weekdaysの配列を使って、０番目から探す
   */
   const paddingDays = weekdays.indexOf(dateString.split(",")[0]);
-  /*ループで空白の日にちを引いて表示させる,paddingdays2+daysinmonth30
-  i>2padingsays
-  */
+  //月表示
+  document.getElementById("monthDisplay").innerText = `${dt.toLocaleDateString("en-US", { month: "long" })}${year}`;
+
+  //ボタンによって次前の月が呼び出されたときリセットして読み込む
+  calendar.innerHTML = "";
+  //月の空白と日にちを保持してfor文で表示
   for (let i = 1; i <= paddingDays + daysInmonth; i++) {
     const daySquare = document.createElement("div");
     daySquare.classList.add("day");
-
+    //i(日にち)がpaddingdaysより大きい場合日にちを１から表示elsepaddingを表示
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
       daySquare.addEventListener("click", () => console.log("click"));
     } else {
       daySquare.classList.add("padding");
     }
+    //カレンダー内に表示
     calendar.appendChild(daySquare);
   }
-  console.log(paddingDays);
 }
 
+//ボタン、変数nav=0 次の月++ 前の月-- そしてload();
+function initButtons() {
+  document.getElementById("nextButton").addEventListener("click", () => {
+    nav++;
+    load();
+  });
+  document.getElementById("backButton").addEventListener("click", () => {
+    nav--;
+    load();
+  });
+}
+
+initButtons();
 load();
