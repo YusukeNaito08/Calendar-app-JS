@@ -6,8 +6,28 @@ localstrage..ユーザーのデータをwebブラウザ(ローカル環境)に�
 ローカルからデータを取得できればJSON.parseを返し配列の初期化
 */
 const calendar = document.getElementById("calendar"); //カレンダーを操作
-const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const newEventModal = document.getElementById("newEventModal"); //モーダル表示
+const backDrop = document.getElementById("modalBackDrop");
+const eventTitleInput = document.getElementById("eventTitleInput");
 //カレンダーの空白を計算
+const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+//ユーザーがクリックした日にちを知る必要があるdateオブジェクト
+function openModal(date) {
+  clicked = date;
+
+  //ユーザーのイベント追加、削除、すでに存在判断
+  //find.(e)イベントオブジェクトとは、発生したイベントに関する様々な情報を提供するオブジェクト
+  const eventForDay = events.find((e) => e.date === clicked);
+
+  if (eventForDay) {
+    console.log("Already Exsit");
+  } else {
+    newEventModal.style.display = "block";
+  }
+
+  backDrop.style.display = "block";
+}
 
 function load() {
   const dt = new Date();
@@ -48,7 +68,8 @@ function load() {
     //i(日にち)がpaddingdaysより大きい場合日にちを１から表示elsepaddingを表示
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
-      daySquare.addEventListener("click", () => console.log("click"));
+      //date(month/date/year)
+      daySquare.addEventListener("click", () => openModal(`${month + 1}/${i - paddingDays}/${year}`));
     } else {
       daySquare.classList.add("padding");
     }
@@ -56,8 +77,24 @@ function load() {
     calendar.appendChild(daySquare);
   }
 }
+//モーダル閉じる
+function closeModal() {
+  newEventModal.style.display = "none";
+  backDrop.style.display = "none";
+  eventTitleInput.value = "";
+  clicked = null;
+  load();
+}
+//イベント保存
+function saveEvent() {
+  if (eventTitleInput.value) {
+    eventTitleInput.classList.remove("error");
+  } else {
+    eventTitleInput.classList.add("error");
+  }
+}
 
-//ボタン、変数nav=0 次の月++ 前の月-- そしてload();
+//次前月ボタン、変数nav=0 次の月++ 前の月-- そしてload();
 function initButtons() {
   document.getElementById("nextButton").addEventListener("click", () => {
     nav++;
@@ -67,6 +104,9 @@ function initButtons() {
     nav--;
     load();
   });
+  //イベントボタン
+  document.getElementById("saveButton").addEventListener("click", saveEvent);
+  document.getElementById("cancelButton").addEventListener("click", closeModal);
 }
 
 initButtons();
