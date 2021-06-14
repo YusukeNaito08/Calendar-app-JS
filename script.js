@@ -1,27 +1,29 @@
 let nav = 0; // どの月を閲覧しているか
 let clicked = null; // 日にちの選択　イベントの追加
-let events = localStorage.getItem("events") ? JSON.parse(localStorage.getItem(events)) : [];
+let events = localStorage.getItem("events") ? JSON.parse(localStorage.getItem("events")) : [];
 /*
 localstrage..ユーザーのデータをwebブラウザ(ローカル環境)に保存する/getItem..データを取得/ JSON.parse..JSONをJavaScriptオブジェクトに変換
 ローカルからデータを取得できればJSON.parseを返し配列の初期化
 */
 const calendar = document.getElementById("calendar"); //カレンダーを操作
-const newEventModal = document.getElementById("newEventModal"); //モーダル表示
+const newEventModal = document.getElementById("newEventModal");
+const deleteEventModal = document.getElementById("deleteEventModal"); //
 const backDrop = document.getElementById("modalBackDrop");
-const eventTitleInput = document.getElementById("eventTitleInput");
+const eventTitleInput = document.getElementById("eventTitleInput"); //イベント名
 //カレンダーの空白を計算
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 //ユーザーがクリックした日にちを知る必要があるdateオブジェクト
 function openModal(date) {
   clicked = date;
-
   //ユーザーのイベント追加、削除、すでに存在判断
   //find.(e)イベントオブジェクトとは、発生したイベントに関する様々な情報を提供するオブジェクト
+  //配列の中身をfindしてイベント確認
   const eventForDay = events.find((e) => e.date === clicked);
 
   if (eventForDay) {
-    console.log("Already Exsit");
+    document.getElementById("eventText").innerText = eventForDay.title;
+    deleteEventModal.style.display = "block";
   } else {
     newEventModal.style.display = "block";
   }
@@ -61,25 +63,44 @@ function load() {
 
   //ボタンによって次前の月が呼び出されたときリセットして読み込む
   calendar.innerHTML = "";
+
   //月の空白と日にちを保持してfor文で表示
   for (let i = 1; i <= paddingDays + daysInmonth; i++) {
     const daySquare = document.createElement("div");
     daySquare.classList.add("day");
+
+    const dayString = `${month + 1}/${i - paddingDays}/${year}`;
     //i(日にち)がpaddingdaysより大きい場合日にちを１から表示elsepaddingを表示
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
-      //date(month/date/year)
-      daySquare.addEventListener("click", () => openModal(`${month + 1}/${i - paddingDays}/${year}`));
+
+      const eventForDay = events.find((e) => e.date === dayString); //イベントの日付
+
+      //現在の日にち
+      if (i - paddingDays === day && nav === 0) {
+        daySquare.id = "currentDay";
+      }
+      //カレンダー内にイベントを表示
+      if (eventForDay) {
+        const eventDiv = document.createElement("div");
+        eventDiv.classList.add("event");
+        eventDiv.innerText = eventForDay.title;
+        daySquare.appendChild(eventDiv);
+      }
+
+      daySquare.addEventListener("click", () => openModal(dayString)); //date(month/date/year)
     } else {
       daySquare.classList.add("padding");
     }
-    //カレンダー内に表示
-    calendar.appendChild(daySquare);
+
+    calendar.appendChild(daySquare); //カレンダー内に表示
   }
 }
 //モーダル閉じる
 function closeModal() {
+  eventTitleInput.classList.remove("error");
   newEventModal.style.display = "none";
+  deleteEventModal.style.display = "none";
   backDrop.style.display = "none";
   eventTitleInput.value = "";
   clicked = null;
@@ -89,9 +110,24 @@ function closeModal() {
 function saveEvent() {
   if (eventTitleInput.value) {
     eventTitleInput.classList.remove("error");
+    //変数eventsの中の配列に入力値を保存
+    events.push({
+      date: clicked, //日付
+      title: eventTitleInput.value,
+    });
+    //ローカルストレージに保存//検証ーapplication-localstrage
+    //JSON.strinfify javaScript のオブジェクトや値を JSON 文字列に変換
+    localStorage.setItem("events", JSON.stringify(events));
+    closeModal();
   } else {
     eventTitleInput.classList.add("error");
   }
+}
+
+function deleteEvent() {
+  events = events.filter((e) => e.date != clicked);
+  localStorage.setItem("events", JSON.stringify(events));
+  closeModal();
 }
 
 //次前月ボタン、変数nav=0 次の月++ 前の月-- そしてload();
@@ -107,6 +143,9 @@ function initButtons() {
   //イベントボタン
   document.getElementById("saveButton").addEventListener("click", saveEvent);
   document.getElementById("cancelButton").addEventListener("click", closeModal);
+
+  document.getElementById("deleteButton").addEventListener("click", deleteEvent);
+  document.getElementById("closeButton").addEventListener("click", closeModal);
 }
 
 initButtons();
