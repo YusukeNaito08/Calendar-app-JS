@@ -125,6 +125,7 @@ function saveEvent() {
 }
 
 function deleteEvent() {
+  // 値が「クリックした削除したいイベント」の要素を削除するのは、値が「クリックした削除したいイベント」以外の要素を抽出するのと同じ
   events = events.filter((e) => e.date != clicked);
   localStorage.setItem("events", JSON.stringify(events));
   closeModal();
@@ -150,3 +151,17 @@ function initButtons() {
 
 initButtons();
 load();
+
+/* filter()
+値が「3」の要素を削除する
+値が「3」の要素を削除するのは、値が「3」以外の要素を抽出するのと同じです。
+
+ですから、filter() を使うと次のようなコードになります。
+
+
+var arr = [1, 2, 3, 4, 5];
+
+var arr = arr.filter(function(x){return x != 3});
+
+console.log(arr);  // Array [ 1, 2, 4, 5 ]
+*/
